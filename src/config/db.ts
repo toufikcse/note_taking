@@ -1,0 +1,19 @@
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const connectDatabase = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI || '');
+    console.log(`MongoDB connected: ${conn.connection.host}`);
+  } catch (error) {
+    const message = 'DMongoDB connection failed';
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error(message);
+  }
+};
+
+export default connectDatabase;
