@@ -19,7 +19,7 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String,
       required: true,
-      select: false, // 🔒 hide by default
+      select: false,
     },
 
     role: {
@@ -36,7 +36,9 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true },
 );
 
-// ✅ REQUIRED indexes only
+// Indexes
 UserSchema.index({ interests: 1 }); // aggregation
+// UserSchema.index({ email: 1 });
+// UserSchema.index({ role: 1 }); // admin filtering, only if you filter by role frequently
 
 export default mongoose.model<IUser>('User', UserSchema);

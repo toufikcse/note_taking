@@ -1,14 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
+import { Response, NextFunction } from 'express';
+import { AuthRequest } from '../types/authRequest';
 
-interface MyJwtPayload extends JwtPayload {
-  id: string;
-  role: 'user' | 'admin';
-}
-
-export const authMiddleware = (
-  req: Request,
+const authMiddleware = async (
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -27,21 +22,15 @@ export const authMiddleware = (
 
     const decoded = jwt.verify(token!, secret);
 
-    if (typeof decoded === 'string') {
-      throw new Error('Invalid token');
+    if (typeof decoded === 'string' || !decoded.id || !decoded.role) {
+      throw new Error();
     }
 
-    const payload = decoded as JwtPayload & {
-      id: string;
-      role: 'user' | 'admin';
+    // THIS is where req.user is created
+    (req as AuthRequest).user = {
+      id: decoded.id,
+      role: decoded.role,
     };
-    // ✅ THIS is where req.user is created
-    (req as any).user = {
-      id: payload.id,
-      role: payload.role,
-    };
-
-    // console.log('User:', req.user);
 
     next();
   } catch (error) {
@@ -50,3 +39,5 @@ export const authMiddleware = (
     });
   }
 };
+
+export default authMiddleware;
