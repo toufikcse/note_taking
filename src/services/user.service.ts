@@ -100,7 +100,7 @@ export class UserService {
         $project: {
           name: 1,
           email: 1,
-          posts: 1,
+          notes: 1,
         },
       },
     ]);
